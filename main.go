@@ -40,6 +40,18 @@ func (s *Session) OnQuery(query *pgproto3.Query) (*pgproto3.Query, error) {
 	return query, nil
 }
 
+func (s *Session) OnResult(rows pgx.Rows, err error) {
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("%w", rows)
+}
+
+func (s *Session) OnClose(_ *pgx.Conn) {
+	fmt.Println("I'm out")
+}
+
 func main() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "usage:  %s [options]\n", os.Args[0])
