@@ -61,7 +61,7 @@ func main() {
 	}
 
 	flag.StringVar(&options.proxyAddr, "proxy-addr", "127.0.0.1:15432", "Proxy address")
-	flag.StringVar(&options.pgAddr, "pg-addr", "127.0.0.1:5432", "Postgresql url. Also the PGPROXY_DB_URL environment variable exists")
+	flag.StringVar(&options.pgAddr, "pg-addr", "postgres://127.0.0.1:5432", "Postgresql url. Also the PGPROXY_DB_URL environment variable exists")
 	flag.Parse()
 
 	dbAddr, err := pgAddr()
