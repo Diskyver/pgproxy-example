@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/diskyver/pgproxy"
 	"github.com/jackc/pgproto3/v2"
@@ -68,5 +70,20 @@ func main() {
 	}
 
 	proxy := pgproxy.CreatePgProxy(dbAddr, &Session{})
+
+	signal_channel := make(chan os.Signal)
+	signal.Notify(signal_channel, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-signal_channel
+		fmt.Println("\rHandle SIGTERM")
+		if err := proxy.Close(); err != nil {
+			fmt.Fprintf(os.Stderr, "Unable to gracefully shutdown the PgProxyServer: %e", err)
+			os.Exit(1)
+		}
+		fmt.Println("PgProxyServer closed gracefully")
+		os.Exit(0)
+	}()
+
 	proxy.Listen(options.proxyAddr)
+
 }
